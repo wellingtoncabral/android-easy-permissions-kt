@@ -38,7 +38,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
 
-                groupId = 'com.github.wellingtoncabral'
+                groupId = 'wellingtoncabral'
                 artifactId = 'android-easy-permissions-kt'
                 version = '1.0.0'
             }
