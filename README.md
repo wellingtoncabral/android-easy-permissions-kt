@@ -30,7 +30,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation ("com.github.wellingtoncabral:android-easy-permissions-kt:$LATEST-VERSION")
+    implementation ("com.github.wellingtoncabral:android-easy-permissions-kt:$LATEST_VERSION")
 }
 ```
 
