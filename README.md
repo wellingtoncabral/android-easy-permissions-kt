@@ -127,3 +127,7 @@ fun hasPermissionFor(vararg permissions: String): Boolean
 fun shouldShowRequestPermissionRationale(permission: String): Boolean
 fun explainWhy(explainWhyUI: ExplainWhyUI): EasyPermissionKt
 ```
+
+### Demo
+<img src="misc/easy_permissions_kt_demo.gif" width="360" height="820">
+
