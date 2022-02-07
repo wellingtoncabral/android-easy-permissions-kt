@@ -30,7 +30,6 @@ fun Fragment.registerForPermissionsResult(
     callback: PermissionsResult.() -> Unit
 ): EasyPermissionKt = EasyPermissionKtImpl(this.requireActivity(), callback)
 
-
 /**
  * Contract to PermissionManager API
  */
@@ -203,7 +202,9 @@ internal class EasyPermissionKtImpl(
      * Checks if permission has already been granted.
      * @param permissions that will be checked.
      */
-    override fun hasPermissionFor(vararg permissions: String) = permissions.all { hasPermissionFor(it) }
+    override fun hasPermissionFor(
+        vararg permissions: String
+    ) = permissions.all { hasPermissionFor(it) }
 
     /**
      * Checks if permission should show rationale UI to the user.
