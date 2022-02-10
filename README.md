@@ -43,7 +43,7 @@ Register the EasyPermissionKt and implement the result callback. The result can 
 class MyActivity : AppCompatActivity() {
     ...
     private val easyPermission = registerForPermissionsResult {
-        whenPermissionGranted {
+        whenPermissionGranted { permissions ->
             // All permissions granted
             TODO()
         }
@@ -73,8 +73,8 @@ class MyFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     
-        easyPermission = registerForPermissionsResult {
-            whenPermissionGranted {
+        easyPermission = registerForPermissionsResult { 
+            whenPermissionGranted { permissions ->
                 TODO()
             }
             whenPermissionShouldShowRationale { permissions ->
