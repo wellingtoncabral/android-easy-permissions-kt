@@ -8,7 +8,9 @@ import kotlin.contracts.contract
  * Permission result type that EasyPermissionKt can return.
  */
 sealed class PermissionsResult {
-    object PermissionGranted : PermissionsResult()
+    data class PermissionGranted(
+        val permissions: List<PermissionGrantedInfo>
+    ) : PermissionsResult()
 
     /**
      * For denied permissions, you can use the list of [permissions] to
@@ -27,13 +29,13 @@ sealed class PermissionsResult {
  */
 @OptIn(ExperimentalContracts::class)
 inline fun PermissionsResult.whenPermissionGranted(
-    crossinline block: () -> Unit
+    crossinline block: (permissions: List<PermissionGrantedInfo>) -> Unit
 ): PermissionsResult {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
     if (this is PermissionsResult.PermissionGranted) {
-        block()
+        block(this.permissions)
     }
     return this
 }

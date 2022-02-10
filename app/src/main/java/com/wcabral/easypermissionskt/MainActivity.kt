@@ -3,10 +3,7 @@ package com.wcabral.easypermissionskt
 import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
-import com.wcabral.easypermissionskt.model.whenPermissionDeniedPermanently
-import com.wcabral.easypermissionskt.model.whenPermissionGranted
-import com.wcabral.easypermissionskt.model.whenPermissionShouldShowRationale
+import com.wcabral.easypermissionskt.model.*
 import com.wcabral.easypermissionskt_sample.R
 import com.wcabral.easypermissionskt_sample.databinding.ActivityMainBinding
 
@@ -15,16 +12,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val easyPermission = registerForPermissionsResult {
-        whenPermissionGranted {
-            Toast.makeText(this@MainActivity, "Granted", Toast.LENGTH_SHORT).show()
+        whenPermissionGranted { permissions ->
+            showPermissionsGranted(permissions)
         }
 
-        whenPermissionShouldShowRationale {
-            Toast.makeText(this@MainActivity, "PermissionShouldShowRationale", Toast.LENGTH_SHORT).show()
+        whenPermissionShouldShowRationale { permissions ->
+            showPermissionShouldShowRationale(permissions)
         }
 
-        whenPermissionDeniedPermanently {
-            Toast.makeText(this@MainActivity, "Denied", Toast.LENGTH_SHORT).show()
+        whenPermissionDeniedPermanently { permissions ->
+            showPermissionDenied(permissions)
         }
     }
 
@@ -47,21 +44,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnHasPermissionFor.setOnClickListener {
-            val result = easyPermission.hasPermissionFor(Manifest.permission.CAMERA)
-            Toast.makeText(
-                this,
-                "hasPermissionFor ${Manifest.permission.CAMERA}: $result",
-                Toast.LENGTH_SHORT
-            ).show()
+            easyPermission.hasPermissionFor(
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            ).also {
+                updateUi {
+                    "hasPermissionFor\n${Manifest.permission.CAMERA}: $it"
+                }
+            }
         }
 
         binding.btnShouldShowRequestPermissionRationale.setOnClickListener {
-            val result = easyPermission.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
-            Toast.makeText(
-                this,
-                "shouldShowRequestPermissionRationale ${Manifest.permission.CAMERA}: $result",
-                Toast.LENGTH_SHORT
-            ).show()
+            easyPermission.shouldShowRequestPermissionRationale(
+                Manifest.permission.CAMERA
+            ).also {
+                updateUi {
+                    "shouldShowRequestPermissionRationale\n${Manifest.permission.CAMERA}: $it"
+                }
+            }
         }
 
         binding.btnExplainWhy.setOnClickListener {
@@ -78,4 +78,36 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    private fun showPermissionsGranted(permissions: List<PermissionGrantedInfo>) {
+        updateUi {
+            permissions.joinToString(
+                prefix = "Permissions Granted \n",
+                separator = "\n"
+            ) { it.permission }
+        }
+    }
+
+    private fun showPermissionShouldShowRationale(permissions: List<PermissionDeniedInfo>) {
+        updateUi {
+            permissions.joinToString(
+                prefix = "Permissions should show rationale \n",
+                separator = "\n"
+            ) { it.permission }
+        }
+    }
+
+    private fun showPermissionDenied(permissions: List<PermissionDeniedInfo>) {
+        updateUi {
+            permissions.joinToString(
+                prefix = "Permissions Denied Permanently \n",
+                separator = "\n"
+            ) { it.permission }
+        }
+    }
+
+    private fun updateUi(block: () -> String) {
+        binding.tvResult.text = block()
+    }
+
 }
