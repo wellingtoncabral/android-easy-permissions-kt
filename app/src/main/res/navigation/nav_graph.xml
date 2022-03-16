@@ -8,6 +8,17 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.wcabral.easypermissionskt.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_sampleFragment"
+            app:destination="@id/sampleFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sampleFragment"
+        android:name="com.wcabral.easypermissionskt.SampleFragment"
         android:label="fragment_main2"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_sample" />
+
 </navigation>
