@@ -2,6 +2,7 @@ package com.wcabral.easypermissionskt
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -24,7 +25,7 @@ private const val PERMISSION_KEY = "permission_manager_key"
  */
 fun FragmentActivity.registerForPermissionsResult(
     callback: PermissionsResult.() -> Unit
-): EasyPermissionKt = EasyPermissionKtImpl(this, callback)
+): EasyPermissionKt = EasyPermissionKtImpl(this, this, callback)
 
 /**
  * Extension function to register permission result from [Fragment]
@@ -32,7 +33,7 @@ fun FragmentActivity.registerForPermissionsResult(
  */
 fun Fragment.registerForPermissionsResult(
     callback: PermissionsResult.() -> Unit
-): EasyPermissionKt = EasyPermissionKtImpl(this.requireActivity(), callback)
+): EasyPermissionKt = EasyPermissionKtImpl(this.requireActivity(), this, callback)
 
 /**
  * Contract to PermissionManager API
@@ -102,6 +103,7 @@ interface EasyPermissionKt {
  */
 internal class EasyPermissionKtImpl(
     private val activity: FragmentActivity,
+    lifecycleOwner: LifecycleOwner,
     private val callback: (PermissionsResult) -> Unit
 ) : DefaultLifecycleObserver, EasyPermissionKt {
 
@@ -120,7 +122,7 @@ internal class EasyPermissionKtImpl(
     init {
         // Add own PermissionManage implementing in the lifecycle scope.
         // This make sure that this component will be lifecycle aware.
-        activity.lifecycle.addObserver(this)
+        lifecycleOwner.lifecycle.addObserver(this)
     }
 
     /**
@@ -130,7 +132,7 @@ internal class EasyPermissionKtImpl(
     override fun onCreate(owner: LifecycleOwner) {
         resultLauncher = activity.activityResultRegistry.register(
             PERMISSION_KEY,
-            activity,
+            owner,
             ActivityResultContracts.RequestMultiplePermissions()
         ) { result ->
             val permissionsDenied = result.asPermissionsDenied()
@@ -194,7 +196,9 @@ internal class EasyPermissionKtImpl(
      * @param permission that will be checked.
      */
     override fun shouldShowRequestPermissionRationale(permission: String) =
-        activity.shouldShowRequestPermissionRationale(permission)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity.shouldShowRequestPermissionRationale(permission)
+        } else false
 
     /**
      * Create a [ExplainWhyUI] dialog before requesting permissions
